@@ -77,7 +77,7 @@ namespace WSystem.EInvoice
     /// </summary>
     public sealed class EInvoice
     {
-        public const string Version = "0.9.0-beta.1";
+        public const string Version = "0.9.0-beta.2";
 
         private readonly IValidator? _validator;
         private readonly DateTimeOffset? _pdfTime;
@@ -90,29 +90,54 @@ namespace WSystem.EInvoice
             _pdfTime = options.PdfTime;
         }
 
-        public CreateResult Create(Invoice invoice) => CreateFromValue(Json.Decode(invoice.ToJson()));
-        /// <param name="json">the POST /einvoice/create JSON body</param>
+        /// <summary>Creates the e-invoice: XML (and PDF for ZUGFeRD / Factur-X), validated unless NoValidation is set.</summary>
+        /// <exception cref="InputError">The invoice is not valid JSON, not a JSON object, or has missing or invalid fields
+        /// (the same 400 errors as the API).</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="invoice"/> is null.</exception>
+        public CreateResult Create(Invoice invoice) => CreateFromValue(Json.Decode((invoice ?? throw new ArgumentNullException(nameof(invoice))).ToJson()));
+        /// <summary>Creates the e-invoice from JSON.</summary>
+        /// <param name="json">the invoice JSON (same shape as the API's create request)</param>
+        /// <exception cref="InputError">The invoice is not valid JSON, not a JSON object, or has missing or invalid fields
+        /// (the same 400 errors as the API).</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="json"/> is null.</exception>
         public CreateResult Create(string json) => CreateFromValue(Json.Decode(json));
-        /// <param name="invoice">a dictionary with the POST /einvoice/create shape (nested dictionaries / lists, numbers, strings)</param>
-        public CreateResult Create(IDictionary<string, object?> invoice) => CreateFromValue(Json.Normalize(invoice));
+        /// <summary>Creates the e-invoice from a dictionary.</summary>
+        /// <param name="invoice">a dictionary with the invoice JSON shape (nested dictionaries / lists, numbers, strings)</param>
+        /// <exception cref="InputError">The invoice is not valid JSON, not a JSON object, or has missing or invalid fields
+        /// (the same 400 errors as the API).</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="invoice"/> is null.</exception>
+        public CreateResult Create(IDictionary<string, object?> invoice) => CreateFromValue(Json.Normalize(invoice ?? throw new ArgumentNullException(nameof(invoice))));
 
+        /// <summary>Validates an e-invoice (UBL or CII XML, or a ZUGFeRD / Factur-X PDF). Rule failures are returned in the
+        /// result (<c>Valid == false</c>); input that is not an e-invoice at all throws instead.</summary>
+        /// <exception cref="ArgumentNullException"><paramref name="data"/> is null.</exception>
+        /// <exception cref="InputError">The input is empty, too large, not well-formed XML, not a UBL / CII invoice, or a PDF
+        /// without a readable embedded invoice XML (including PDFs whose decompressed data exceeds 75 MB).</exception>
+        /// <exception cref="InvalidOperationException">NoValidation is set.</exception>
         public ValidationResult Validate(byte[] data, string rules = "auto")
         {
+            if (data == null) throw new ArgumentNullException(nameof(data));
             if (_validator == null) throw new InvalidOperationException("no validator configured (NoValidation is set)");
             return _validator.Validate(data, rules);
         }
 
-        public ValidationResult Validate(string path, string rules = "auto") => Validate(File.ReadAllBytes(path), rules);
+        /// <summary>Validates an e-invoice file. See <see cref="Validate(byte[], string)"/>.</summary>
+        /// <exception cref="InputError">See <see cref="Validate(byte[], string)"/>.</exception>
+        public ValidationResult Validate(string path, string rules = "auto") => Validate(File.ReadAllBytes(path ?? throw new ArgumentNullException(nameof(path))), rules);
 
         /// <summary>Only the XML (UBL or CII) for an invoice, without validation or PDF.</summary>
-        public static string Xml(Invoice invoice) => XmlBuilder.Build(Json.Decode(invoice.ToJson())).Xml;
-        public static string Xml(string json) => XmlBuilder.Build(Json.Decode(json)).Xml;
+        /// <exception cref="InputError">The invoice is not a JSON object or has missing or invalid fields.</exception>
+        public static string Xml(Invoice invoice) => XmlOf(Json.Decode((invoice ?? throw new ArgumentNullException(nameof(invoice))).ToJson()));
+        /// <exception cref="InputError">The text is not valid JSON, not a JSON object, or has missing or invalid fields.</exception>
+        public static string Xml(string json) => XmlOf(Json.Decode(json));
+        private static string XmlOf(object? invoice) =>
+            invoice is Dictionary<string, object?> ? XmlBuilder.Build(invoice).Xml : throw new InputError("the invoice must be a JSON object");
 
         private static readonly Regex Unsafe = new Regex("[^A-Za-z0-9._-]+", RegexOptions.CultureInvariant);
 
         private CreateResult CreateFromValue(object? invoice)
         {
-            if (!Py.IsDict(invoice)) throw new InputError("the invoice must be a JSON object");
+            if (!(invoice is Dictionary<string, object?>)) throw new InputError("the invoice must be a JSON object");
             var b = XmlBuilder.Build(invoice);
             var notes = new List<string>();
             foreach (var ln in Py.AsList(Py.G(invoice, "lines")))
@@ -132,7 +157,7 @@ namespace WSystem.EInvoice
                 Valid = v?.Valid, Format = b.Format, Syntax = b.Syntax, Totals = b.Totals, Xml = b.Xml,
                 Errors = v?.Errors ?? new List<ValidationIssue>(), Warnings = v?.Warnings ?? new List<ValidationIssue>(), Checked = v?.Checked,
                 Validator = engine, Engine = engine, Conformance = v?.Conformance, Notes = notes,
-                Disclaimer = v?.Disclaimer ?? Codes.DISCLAIMER,
+                Disclaimer = v != null ? v.Disclaimer : Codes.NO_VALIDATION_DISCLAIMER,
             };
             if (b.Pdf != null)
             {

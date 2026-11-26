@@ -17,6 +17,7 @@ namespace WSystem.EInvoice.Pdf
         private readonly string _pdf; // Latin-1 view of the bytes
         private readonly Dictionary<int, int> _offsets = new Dictionary<int, int>();
         private readonly Dictionary<int, string> _packed = new Dictionary<int, string>();
+        private long _budget = Bytes.MaxInflatedBytes; // decompressed bytes left for this PDF (decompression-bomb guard)
         private static readonly Regex ObjRe = new Regex(@"(?<![0-9])([0-9]{1,10})\s+([0-9]{1,5})\s+obj\b", RegexOptions.CultureInvariant);
 
         private AttachmentReader(string pdf)
@@ -32,7 +33,10 @@ namespace WSystem.EInvoice.Pdf
             }
         }
 
-        /// <summary>Embedded files of a PDF: file name =&gt; bytes, in object order.</summary>
+        /// <summary>Embedded files of a PDF: file name =&gt; bytes, in object order. All decompressed streams of one PDF
+        /// together may not exceed 75,000,000 bytes (<c>Bytes.MaxInflatedBytes</c>, the same limit as the W System API).</summary>
+        /// <exception cref="InputError">The PDF is encrypted, a stream uses an unsupported filter or is corrupt, or the
+        /// decompressed data exceeds the limit.</exception>
         public static IReadOnlyDictionary<string, byte[]> Read(byte[] pdf)
         {
             var s = Bytes.Latin1(pdf);
@@ -129,13 +133,15 @@ namespace WSystem.EInvoice.Pdf
             return n;
         }
 
-        private static byte[] Decode(string dict, string data)
+        private byte[] Decode(string dict, string data)
         {
             var f = Regex.Match(dict, @"/Filter\s*(?:\[\s*)?/(\w+)");
             if (f.Success)
             {
                 if (f.Groups[1].Value != "FlateDecode") throw new InputError("could not read PDF: unsupported stream filter " + f.Groups[1].Value);
-                return Bytes.Inflate(Bytes.FromLatin1(data)) ?? throw new InputError("could not read PDF: corrupt compressed stream");
+                var outp = Bytes.Inflate(Bytes.FromLatin1(data), _budget) ?? throw new InputError("could not read PDF: corrupt compressed stream");
+                _budget -= outp.Length;
+                return outp;
             }
             return Bytes.FromLatin1(data);
         }
@@ -147,6 +153,7 @@ namespace WSystem.EInvoice.Pdf
             if (!nm.Success || !fm.Success) return;
             string data;
             try { data = Bytes.Latin1(Decode(dict, stream)); }
+            catch (DecompressionLimitError) { throw; }
             catch (InputError) { return; }
             int first = int.Parse(fm.Groups[1].Value, CultureInfo.InvariantCulture);
             if (first > data.Length) return;

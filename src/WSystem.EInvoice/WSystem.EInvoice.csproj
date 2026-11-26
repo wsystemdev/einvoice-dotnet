@@ -1,17 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net8.0;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net10.0;net8.0;netstandard2.0</TargetFrameworks>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <RootNamespace>WSystem.EInvoice</RootNamespace>
     <AssemblyName>WSystem.EInvoice</AssemblyName>
     <PackageId>WSystem.EInvoice</PackageId>
-    <Version>0.9.0-beta.1</Version>
+    <Version>0.9.0-beta.2</Version>
     <Authors>W System</Authors>
     <Company>W System</Company>
     <Product>W System e-invoice SDK for .NET</Product>
     <Copyright>Copyright 2026 W System</Copyright>
-    <Description>Create and validate EU e-invoices locally in .NET: XRechnung 3.0 (UBL and CII), EN 16931 UBL/CII, ZUGFeRD 2.3 / Factur-X 1.07 PDF/A-3b and credit notes. Offline, no API key, Apache-2.0. Optional official validation through the W System validator or API.</Description>
+    <Description>Create and validate (pre-check) EU e-invoices locally in .NET: XRechnung 3.0 (UBL and CII), EN 16931 UBL/CII, ZUGFeRD 2.3 / Factur-X 1.07 PDF/A-3b and credit notes. Offline, no API key, Apache-2.0. Optional official validation through the W System validator or API.</Description>
     <PackageTags>xrechnung;zugferd;factur-x;en16931;e-invoice;e-rechnung;einvoice;ubl;cii;kosit;schematron;peppol;pdfa3</PackageTags>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageProjectUrl>https://wsystem.dev</PackageProjectUrl>

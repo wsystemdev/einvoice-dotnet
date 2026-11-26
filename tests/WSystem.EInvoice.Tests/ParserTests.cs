@@ -31,6 +31,8 @@ namespace WSystem.EInvoice.Tests
                 Assert.Equal("Tag der Leistungserbringung", dl["date"]);
                 dl["date"] = "2020-01-02";
             }
+            // the SDK's note points to EInvoice.Validate instead of the API endpoint (only intended difference)
+            ((Dictionary<string, object?>)want!)["note"] = Parser.NOTE;
             Assert.Equal(Json.Encode(want), Json.Encode(Parser.Parse(data)));
         }
     }

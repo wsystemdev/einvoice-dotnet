@@ -15,11 +15,15 @@ namespace WSystem.EInvoice
     public static class Parser
     {
         public const string NOTE = "Values are read as written in the XML (strings, no rounding or recomputation). Reading does not check validity: "
-            + "use POST /einvoice/validate for the EN 16931 / XRechnung rules. Not tax advice.";
+            + "use EInvoice.Validate (or the W System API) for the EN 16931 / XRechnung rules. Not tax advice.";
 
         /// <returns>nested Dictionary&lt;string, object?&gt; / List&lt;object?&gt; / string / bool / long values</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="data"/> is null.</exception>
+        /// <exception cref="InputError">The input is empty, too large, not well-formed XML, not a UBL / CII invoice, or a PDF
+        /// without a readable embedded invoice XML (including PDFs whose decompressed data exceeds 75 MB).</exception>
         public static Dictionary<string, object?> Parse(byte[] data)
         {
+            if (data == null) throw new ArgumentNullException(nameof(data));
             var d = Document.Load(data);
             var p = new Impl(Document.Ns(d.Dom));
             var root = d.Dom.DocumentElement!;

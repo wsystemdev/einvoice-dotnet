@@ -42,9 +42,10 @@ namespace WSystem.EInvoice.Validation
 
         public async Task<ValidationResult> ValidateAsync(byte[] data, string rules = "auto", CancellationToken ct = default)
         {
+            if (data == null) throw new ArgumentNullException(nameof(data));
             rules = (rules == "" ? "auto" : rules).ToLowerInvariant();
             if (rules != "auto" && rules != "en16931" && rules != "xrechnung") throw new InputError("rules must be auto, en16931 or xrechnung (peppol is not available yet)");
-            if (data.Length == 0) throw new InputError("empty body: send the invoice XML or PDF as the request body");
+            if (data.Length == 0) throw new InputError("empty input: pass the invoice XML or PDF bytes");
             var head = Support.Bytes.Latin1(data.Take(1024).ToArray()).TrimStart();
             var url = _baseUrl + "/einvoice/validate?rules=" + Uri.EscapeDataString(rules);
             using var req = new HttpRequestMessage(HttpMethod.Post, url) { Content = new ByteArrayContent(data) };

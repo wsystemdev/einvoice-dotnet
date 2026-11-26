@@ -50,6 +50,8 @@ namespace WSystem.EInvoice.Model
 
         public const string DISCLAIMER = "Technical check against the official EN 16931 / XRechnung rule sets. A technically valid file is not tax or legal advice. "
             + "Peppol BIS 3 specific rules (PEPPOL-EN16931-*) are not checked yet.";
+        public const string NO_VALIDATION_DISCLAIMER = "Not validated: validation was turned off (NoValidation), so neither the XML Schema nor the EN 16931 / XRechnung rules were checked. "
+            + "Validate the file before sending it. A file is not tax or legal advice.";
 
         public static PyDecimal Dec(object? v, string field)
         {

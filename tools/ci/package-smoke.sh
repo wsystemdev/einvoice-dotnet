@@ -2,10 +2,10 @@
 # Fresh console app that installs WSystem.EInvoice from a local .nupkg folder (or nuget.org when no folder is given),
 # creates a ZUGFeRD PDF and an XRechnung, and validates both. Usage: tools/ci/package-smoke.sh [nupkg dir] [version]
 set -euo pipefail
-SRC=${1:-}; VER=${2:-0.9.0-beta.1}
+SRC=${1:-}; VER=${2:-0.9.0-beta.2}
 dir=$(mktemp -d); trap 'rm -rf "$dir"' EXIT
 cd "$dir"
-dotnet new console -n Smoke -o . --framework net8.0 >/dev/null
+dotnet new console -n Smoke -o . --framework net10.0 >/dev/null
 if [ -n "$SRC" ]; then
   dotnet add package WSystem.EInvoice --version "$VER" --source "$(cd "$OLDPWD" && cd "$SRC" && pwd)" >/dev/null
 else

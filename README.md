@@ -3,14 +3,14 @@
 Create, check and read XRechnung 3.0 (UBL and CII), EN 16931 UBL/CII, Peppol BIS 3 structure and ZUGFeRD / Factur-X
 PDF/A-3b invoices inside your own .NET application. No API key, no network. Apache-2.0.
 
-> **Status: beta (0.9.0-beta.1).** The API may change before v1.0. Until the package is on NuGet, build it from this
+> **Status: beta (0.9.0-beta.2).** The API may change before v1.0. Until the package is on NuGet, build it from this
 > repository (see below).
 
-- .NET 8 and .NET Standard 2.0 (so .NET Framework 4.6.2+ and Mono work too). One dependency on .NET Standard: System.Text.Json.
+- .NET 10, .NET 8 and .NET Standard 2.0 (so .NET Framework 4.6.2+ and Mono work too). One dependency on .NET Standard: System.Text.Json.
 - Same input and the same XML as the W System API's `POST /einvoice/create`, byte for byte (tested on 439 fixtures).
 - Totals, VAT breakdown and rounding are computed for you (EN 16931 rules), including allowances, charges, credit notes and prepaid amounts.
 - ZUGFeRD 2.3 / Factur-X 1.07 hybrids: a readable A4 PDF/A-3b invoice with the CII XML embedded (`factur-x.xml` / `xrechnung.xml`).
-- Validation: XML Schema plus the bundled, unmodified official KoSIT / CEN EN 16931 and XRechnung 3.0.2 rule files.
+- Validation (pre-check): XML Schema plus the bundled, unmodified official KoSIT / CEN EN 16931 and XRechnung 3.0.2 rule files.
 - Moving off ZUGFeRD-csharp (maintenance ends 30 Nov 2026)? See [docs/MIGRATION-FROM-ZUGFERD-CSHARP.md](docs/MIGRATION-FROM-ZUGFERD-CSHARP.md).
 
 ## Install
@@ -65,6 +65,14 @@ foreach (var e in r.Errors) Console.WriteLine($"{e.RuleId} ({string.Join(",", e.
 The result has the same fields as the API's `POST /einvoice/validate` (`r.ToJson()` writes them). Slovak and Norwegian
 national field checks run as warnings when the seller is in SK or NO.
 
+Rule failures come back in the result (`r.Valid == false`). Input that is not an e-invoice at all throws `InputError`
+instead: empty or oversized input (default limit 5 MB), XML that is not well-formed or has a DOCTYPE, a root element that
+is not a UBL or CII invoice, or a PDF without a readable embedded invoice XML. `Create` throws `InputError` for invalid
+JSON or missing fields, and `ArgumentNullException` for null arguments.
+
+Untrusted PDFs: all decompressed streams of one PDF together may be at most 75,000,000 bytes (the same limit as the
+W System API), so a small "decompression bomb" PDF is refused with `InputError` instead of using gigabytes of memory.
+
 ## Read an incoming file
 
 ```csharp
@@ -80,8 +88,9 @@ Console.WriteLine($"{inv["invoice_number"]}: {((Dictionary<string, object?>)inv[
 | `dotnet-core` (default) | nothing to install, offline | yes | pre-check: a pure-.NET engine runs the bundled official rule files; it is not the official engine | `Engine = "dotnet-core"`, `Conformance = "pre-check"`, `Checked["EN16931"] = "core-subset"` |
 | `remote` | `new EInvoice(new HttpValidator(apiKey: ...))`; opt-in, the file is sent to the W System API or a self-hosted W System validator | yes | official | `Engine = "remote"`, `Conformance = "official"` |
 
-A valid result from `dotnet-core` is a pre-check, not a conformance check. On the test corpus it gives the same rule
-ids, messages and locations as the official engine, but only the official engine is the reference. Peppol BIS 3
+A valid result from `dotnet-core` is a pre-check, not a conformance check. On the test corpus it gives the same schematron rule
+ids, messages and locations as the official engine (XML Schema errors use .NET's wording and carry no location), but it
+can differ on accept/reject, and only the official engine is the reference. Peppol BIS 3
 rules are not included (the Peppol-origin rules inside the XRechnung configuration do run).
 
 ```csharp
@@ -97,6 +106,9 @@ var check = official.Validate(File.ReadAllBytes("invoice.xml"));   // keyless wo
 - Validator: same verdict, rule ids, severities, messages, locations and business terms as the W System reference engine on 195 public files (CEN, KoSIT, Mustang, W System), plus the shared 17-file validator corpus; XPath engine checked against 278 answers recorded from Saxon.
 - PDF: every hybrid has the same objects and page content as the W System PHP SDK's PDF, and round-trips through the validator.
 - CI runs the official tools on every generated file: KoSIT validator 1.6.3 (XRechnung), veraPDF 1.30 (PDF/A-3b) and Mustang 2.26 (ZUGFeRD / Factur-X).
+
+PDF bytes (and `PdfInfo.Sha256`) can differ between .NET versions because the runtime's zlib differs (.NET 9+ uses
+zlib-ng). The embedded XML is identical on every runtime.
 
 ## Licence
 

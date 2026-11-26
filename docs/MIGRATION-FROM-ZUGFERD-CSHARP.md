@@ -1,6 +1,6 @@
 # Migrating from ZUGFeRD-csharp to WSystem.EInvoice
 
-ZUGFeRD-csharp (`s2industries/ZUGFeRD-csharp`, Apache-2.0) stops receiving maintenance on 30 November 2026. This guide
+ZUGFeRD-csharp ([stephanstapel/ZUGFeRD-csharp](https://github.com/stephanstapel/ZUGFeRD-csharp), Apache-2.0; namespace `s2industries.ZUGFeRD`) stops receiving maintenance on 30 November 2026. This guide
 maps its `InvoiceDescriptor` API to WSystem.EInvoice, with code side by side. WSystem.EInvoice is an independent
 implementation; it contains no ZUGFeRD-csharp code. Both libraries are Apache-2.0.
 
@@ -172,7 +172,7 @@ foreach (var e in r.Errors) Console.WriteLine($"{e.RuleId} {e.Location}: {e.Mess
 `Create` validates what it generates by default (`new EInvoice(new EInvoiceOptions { NoValidation = true })` turns that
 off). The offline engine is labelled `dotnet-core` / `pre-check`; for the official KoSIT / CEN engine use `HttpValidator`.
 
-## Not in 0.9.0-beta.1 yet
+## Not in 0.9.0-beta.2 yet
 
 If you rely on one of these, keep it on your list or open an issue:
 

@@ -19,7 +19,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
-        with: {dotnet-version: '8.0.x'}
+        with: {dotnet-version: "8.0.x\n10.0.x"}
       - run: dotnet build -c Release
       - run: dotnet test -c Release --no-build
       - name: Pack (NuGet package + symbols)
@@ -39,7 +39,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
-        with: {dotnet-version: '8.0.x'}
+        with: {dotnet-version: "8.0.x\n10.0.x"}
       - uses: actions/setup-java@v4
         with: {distribution: temurin, java-version: '21'}
       - name: Download pinned validators
@@ -70,7 +70,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
-        with: {dotnet-version: '8.0.x'}
+        with: {dotnet-version: "8.0.x\n10.0.x"}
       - run: dotnet test -c Release --filter "FullyQualifiedName~HttpValidatorTests.RoundTripWithApi"
         env:
           WSYSTEM_API_ROUNDTRIP: '1'

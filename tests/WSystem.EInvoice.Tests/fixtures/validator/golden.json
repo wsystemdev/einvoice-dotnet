@@ -5390,7 +5390,7 @@
    "profile": "Factur-X/ZUGFeRD BASICWL",
    "rules": "auto",
    "sha256": "cce9182d7b380508793f5d290ddaa2446c4b925741571feb616903be688a4940",
-   "source": "Mustang project sample (Apache-2.0), via vatcheck tests/corpus",
+   "source": "Mustang project sample (Apache-2.0)",
    "syntax": "cii",
    "valid": false,
    "warnings": []
@@ -5414,7 +5414,7 @@
    "profile": "Factur-X/ZUGFeRD BASIC",
    "rules": "auto",
    "sha256": "3272dd58f4f55f8b5970fe6661c5afcc93398971ee3032559086aa91feb474e7",
-   "source": "Mustang project sample (Apache-2.0), via vatcheck tests/corpus",
+   "source": "Mustang project sample (Apache-2.0)",
    "syntax": "cii",
    "valid": true,
    "warnings": [
@@ -5447,7 +5447,7 @@
    "profile": "EN 16931",
    "rules": "auto",
    "sha256": "a0978983423b7261cea82ed4bea1e7b3062c87521692be83ad52ed27caeb6612",
-   "source": "Mustang project sample (Apache-2.0), via vatcheck tests/corpus",
+   "source": "Mustang project sample (Apache-2.0)",
    "syntax": "cii",
    "valid": true,
    "warnings": []
@@ -5471,7 +5471,7 @@
    "profile": "EN 16931",
    "rules": "auto",
    "sha256": "e8d86c3070b4d0d855065f32d9c24829644b77efe0e03bdb9103b340a9a965e8",
-   "source": "Mustang project sample (Apache-2.0), via vatcheck tests/corpus",
+   "source": "Mustang project sample (Apache-2.0)",
    "syntax": "cii",
    "valid": true,
    "warnings": []
@@ -5521,7 +5521,7 @@
    "profile": "Factur-X/ZUGFeRD EXTENDED",
    "rules": "auto",
    "sha256": "b6a000d5806b33290445c61d388217853436b8ed25fdc044e1ed59f42bd6ff68",
-   "source": "Mustang project sample (Apache-2.0), via vatcheck tests/corpus",
+   "source": "Mustang project sample (Apache-2.0)",
    "syntax": "cii",
    "valid": true,
    "warnings": [
@@ -5620,7 +5620,7 @@
    "profile": "Factur-X/ZUGFeRD EXTENDED",
    "rules": "auto",
    "sha256": "17ce3202aed1105562e794167cc431200c55290e247ce3fef50615ee66e70a97",
-   "source": "Mustang project sample (Apache-2.0), via vatcheck tests/corpus",
+   "source": "Mustang project sample (Apache-2.0)",
    "syntax": "cii",
    "valid": true,
    "warnings": [
@@ -5795,7 +5795,7 @@
    "profile": "Factur-X/ZUGFeRD MINIMUM",
    "rules": "auto",
    "sha256": "4d331416500719b338d8f969c8a414c396adce37e21273efdbf59c6a41920712",
-   "source": "Mustang project sample (Apache-2.0), via vatcheck tests/corpus",
+   "source": "Mustang project sample (Apache-2.0)",
    "syntax": "cii",
    "valid": false,
    "warnings": []
@@ -5819,7 +5819,7 @@
    "profile": "XRechnung",
    "rules": "auto",
    "sha256": "daeb678623b9fd099e177f52a9231028780fb68f4469a8784f8f31f674bf079e",
-   "source": "Mustang project sample (Apache-2.0), via vatcheck tests/corpus",
+   "source": "Mustang project sample (Apache-2.0)",
    "syntax": "cii",
    "valid": true,
    "warnings": [
@@ -6699,7 +6699,7 @@
    "warnings": []
   }
  },
- "engine": "W System Python engine (vatcheck einvoice.validate)",
+ "engine": "W System reference engine (W System API)",
  "engine_commit": "8657f075185186433ff64e4b6671f39ce0c6c86b",
  "rules": {
   "sha256": "2530cd107c414511c5d0462ec10f886910395abfca820db82e83d70bf01221a8",

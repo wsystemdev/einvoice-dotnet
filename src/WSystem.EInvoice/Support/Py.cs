@@ -160,10 +160,17 @@ namespace WSystem.EInvoice.Support
     /// <summary>JSON &lt;-&gt; plain values, with PHP json_decode/json_encode number semantics.</summary>
     public static class Json
     {
+        /// <exception cref="ArgumentNullException"><paramref name="json"/> is null.</exception>
+        /// <exception cref="InputError">The text is not valid JSON.</exception>
         public static object? Decode(string json)
         {
-            using var doc = JsonDocument.Parse(json, new JsonDocumentOptions { MaxDepth = 512 });
-            return FromElement(doc.RootElement);
+            if (json == null) throw new ArgumentNullException(nameof(json));
+            try
+            {
+                using var doc = JsonDocument.Parse(json, new JsonDocumentOptions { MaxDepth = 512 });
+                return FromElement(doc.RootElement);
+            }
+            catch (JsonException e) { throw new InputError("invalid JSON: " + e.Message); }
         }
 
         public static object? FromElement(JsonElement e)

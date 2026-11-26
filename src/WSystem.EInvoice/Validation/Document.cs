@@ -34,7 +34,7 @@ namespace WSystem.EInvoice.Validation
 
         public static (byte[] Xml, string Container, string? Embedded) ExtractXml(byte[] data, int maxBytes = DEFAULT_MAX_BYTES)
         {
-            if (data.Length == 0) throw new InputError("empty body: send the invoice XML or PDF as the request body");
+            if (data.Length == 0) throw new InputError("empty input: pass the invoice XML or PDF bytes");
             if (data.Length > maxBytes) throw new InputError("file too large (max " + (maxBytes / (1024 * 1024)) + " MB)");
             int i = 0;
             while (i < data.Length && (data[i] == ' ' || data[i] == '\t' || data[i] == '\n' || data[i] == '\r' || data[i] == 0x0B || data[i] == 0x0C)) i++;
@@ -42,8 +42,9 @@ namespace WSystem.EInvoice.Validation
                 return (data, "xml", null);
             IReadOnlyDictionary<string, byte[]> files;
             try { files = AttachmentReader.Read(data); }
+            catch (DecompressionLimitError e) { throw new InputError(e.Message); } // public type only
             catch (InputError e) { throw e.Message.StartsWith("could not read PDF", StringComparison.Ordinal) ? e : new InputError("could not read PDF: " + e.Message); }
-            catch (Exception e) { throw new InputError("could not read PDF: " + e.Message); }
+            catch (Exception e) when (!(e is OutOfMemoryException)) { throw new InputError("could not read PDF: " + e.Message); }
             if (files.Count == 0) throw new InputError("PDF has no embedded files: this is not a ZUGFeRD/Factur-X/XRechnung hybrid invoice");
             string? pick = files.Keys.FirstOrDefault(n => PDF_XML_NAMES.Contains(n.ToLowerInvariant()))
                 ?? files.Keys.FirstOrDefault(n => n.ToLowerInvariant().EndsWith(".xml", StringComparison.Ordinal));
@@ -52,6 +53,7 @@ namespace WSystem.EInvoice.Validation
                 var names = files.Keys.OrderBy(n => n, StringComparer.Ordinal).Select(n => "'" + n + "'");
                 throw new InputError("PDF has embedded files but none is XML: [" + string.Join(", ", names) + "]");
             }
+            if (files[pick].Length > maxBytes) throw new InputError("the embedded XML is too large (max " + (maxBytes / (1024 * 1024)) + " MB)");
             return (files[pick], "pdf", pick);
         }
 

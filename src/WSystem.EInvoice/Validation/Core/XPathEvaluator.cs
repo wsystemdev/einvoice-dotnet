@@ -22,7 +22,7 @@ namespace WSystem.EInvoice.Validation.Core
 
     /// <summary>
     /// Evaluates XPathParser ASTs over a Tree with XPath 2.0 semantics. Items: Node, string (xs:string), Untyped,
-    /// long (xs:integer), Dec (xs:decimal), double (xs:double), bool, DateV. Port of the PHP SDK's php-core engine.
+    /// long (xs:integer), Dec (xs:decimal), double (xs:double), bool, DateV.
     /// </summary>
     internal sealed class XPathEvaluator
     {

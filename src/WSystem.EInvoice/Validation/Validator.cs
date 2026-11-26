@@ -39,8 +39,14 @@ namespace WSystem.EInvoice.Validation
 
         public RulePack Rules => _rules;
 
+        /// <summary>Validates locally. Rule failures are returned in the result; input that is not an e-invoice throws.</summary>
+        /// <exception cref="ArgumentNullException"><paramref name="data"/> is null.</exception>
+        /// <exception cref="InputError">The input is empty, too large, not well-formed XML, not a UBL / CII invoice, a PDF
+        /// without a readable embedded invoice XML (including PDFs whose decompressed data exceeds 75 MB), or
+        /// <paramref name="rules"/> is unknown.</exception>
         public ValidationResult Validate(byte[] data, string rules = "auto")
         {
+            if (data == null) throw new ArgumentNullException(nameof(data));
             var sw = Stopwatch.StartNew();
             var doc = Document.Load(data, _maxBytes);
             rules = (rules == "" ? "auto" : rules).ToLowerInvariant();

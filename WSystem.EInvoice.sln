@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{5B4152D3-B949-4DE6-A99D-52494924EFAE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WSystem.EInvoice", "src\WSystem.EInvoice\WSystem.EInvoice.csproj", "{CFEE25B6-316B-4CB3-B637-1B6D69553359}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{8BDD02C9-50B4-4B8E-9870-88DF4BA2A7F0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WSystem.EInvoice.Tests", "tests\WSystem.EInvoice.Tests\WSystem.EInvoice.Tests.csproj", "{08B0A1C4-5832-461D-87DB-D696E9361A5A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CFEE25B6-316B-4CB3-B637-1B6D69553359}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CFEE25B6-316B-4CB3-B637-1B6D69553359}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CFEE25B6-316B-4CB3-B637-1B6D69553359}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CFEE25B6-316B-4CB3-B637-1B6D69553359}.Release|Any CPU.Build.0 = Release|Any CPU
+		{08B0A1C4-5832-461D-87DB-D696E9361A5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{08B0A1C4-5832-461D-87DB-D696E9361A5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{08B0A1C4-5832-461D-87DB-D696E9361A5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{08B0A1C4-5832-461D-87DB-D696E9361A5A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{CFEE25B6-316B-4CB3-B637-1B6D69553359} = {5B4152D3-B949-4DE6-A99D-52494924EFAE}
+		{08B0A1C4-5832-461D-87DB-D696E9361A5A} = {8BDD02C9-50B4-4B8E-9870-88DF4BA2A7F0}
+	EndGlobalSection
+EndGlobal

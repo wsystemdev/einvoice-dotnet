@@ -50,7 +50,7 @@ namespace WSystem.EInvoice.Pdf
         private string _fontFamily = "", _fontStyle = "";
         private Font? _currentFont;
         private string _drawColor = "0 G", _fillColor = "0 g", _textColor = "0 g";
-        private bool _colorFlag, _inFooter;
+        private bool _colorFlag;
         private readonly List<KeyValuePair<string, string>> _metadata = new List<KeyValuePair<string, string>>();
 
         // ---- PDF/A-3 state
@@ -210,7 +210,7 @@ namespace WSystem.EInvoice.Pdf
             var lw = _lineWidth; var dc = _drawColor; var fc = _fillColor; var tc = _textColor; var cf = _colorFlag;
             if (_page > 0)
             {
-                _inFooter = true; Footer?.Invoke(this); _inFooter = false;
+                Footer?.Invoke(this);
                 _state = 1;
             }
             _page++;
@@ -344,7 +344,7 @@ namespace WSystem.EInvoice.Pdf
         public byte[] Output()
         {
             if (_page == 0) AddPage();
-            _inFooter = true; Footer?.Invoke(this); _inFooter = false;
+            Footer?.Invoke(this);
             _state = 1;
             // header
             Put("%PDF-1.7");

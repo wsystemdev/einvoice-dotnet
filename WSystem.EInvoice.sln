@@ -11,6 +11,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{8BDD02C9
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WSystem.EInvoice.Tests", "tests\WSystem.EInvoice.Tests\WSystem.EInvoice.Tests.csproj", "{08B0A1C4-5832-461D-87DB-D696E9361A5A}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{586B385C-283F-4A4E-8F7E-880A2B03CFDE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Generate", "tools\Generate\Generate.csproj", "{F2DD9EF6-255B-463C-846C-9EBB7AE2C8A3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -28,9 +32,14 @@ Global
 		{08B0A1C4-5832-461D-87DB-D696E9361A5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{08B0A1C4-5832-461D-87DB-D696E9361A5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{08B0A1C4-5832-461D-87DB-D696E9361A5A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F2DD9EF6-255B-463C-846C-9EBB7AE2C8A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2DD9EF6-255B-463C-846C-9EBB7AE2C8A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2DD9EF6-255B-463C-846C-9EBB7AE2C8A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2DD9EF6-255B-463C-846C-9EBB7AE2C8A3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{CFEE25B6-316B-4CB3-B637-1B6D69553359} = {5B4152D3-B949-4DE6-A99D-52494924EFAE}
 		{08B0A1C4-5832-461D-87DB-D696E9361A5A} = {8BDD02C9-50B4-4B8E-9870-88DF4BA2A7F0}
+		{F2DD9EF6-255B-463C-846C-9EBB7AE2C8A3} = {586B385C-283F-4A4E-8F7E-880A2B03CFDE}
 	EndGlobalSection
 EndGlobal

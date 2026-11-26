@@ -1,0 +1,4 @@
+# Fixtures and bundled rule files are compared byte for byte: never convert line endings
+tests/**/fixtures/** -text
+src/WSystem.EInvoice/Resources/** -text
+*.sh text eol=lf

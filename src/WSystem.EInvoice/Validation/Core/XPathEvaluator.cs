@@ -455,7 +455,7 @@ namespace WSystem.EInvoice.Validation.Core
 
         private static (string Digits, int PointPos) Shortest(double a)
         {
-            string r = a.ToString("R", CultureInfo.InvariantCulture);
+            string r = WSystem.EInvoice.Support.Num.RoundTrip(a);
             int ePos = r.IndexOf('E');
             string mant = ePos >= 0 ? r.Substring(0, ePos) : r;
             int exp = ePos >= 0 ? int.Parse(r.Substring(ePos + 1), CultureInfo.InvariantCulture) : 0;
@@ -478,7 +478,7 @@ namespace WSystem.EInvoice.Validation.Core
             if (a >= 1e-6 && a < 1e6)
             {
                 var d = Dec.FromFloat(f);
-                return d == null ? f.ToString("R", CultureInfo.InvariantCulture) : d.ToString();
+                return d == null ? WSystem.EInvoice.Support.Num.RoundTrip(f) : d.ToString();
             }
             var (digits, pointPos) = Shortest(a);
             string m = digits.Length > 1 ? digits[0] + "." + digits.Substring(1) : digits + ".0";
@@ -509,7 +509,7 @@ namespace WSystem.EInvoice.Validation.Core
         public static double ParseDouble(string s)
         {
             var t = s.Trim(' ', '\t', '\n', '\r');
-            if (DoubleRe.IsMatch(t)) return double.Parse(t, NumberStyles.Float, CultureInfo.InvariantCulture);
+            if (DoubleRe.IsMatch(t)) return WSystem.EInvoice.Support.Num.ParseDouble(t);
             switch (t)
             {
                 case "INF": case "+INF": return double.PositiveInfinity;
@@ -572,7 +572,7 @@ namespace WSystem.EInvoice.Validation.Core
             if (!(num is double) && IntLike.IsMatch(u.V))
             {
                 x = ParseLongSat(u.V.Trim(' ', '\t', '\r', '\n', '+'));
-                if (Math.Abs(x) >= 9.2e18) x = double.Parse(u.V.Trim(' ', '\t', '\r', '\n'), NumberStyles.Float, CultureInfo.InvariantCulture);
+                if (Math.Abs(x) >= 9.2e18) x = WSystem.EInvoice.Support.Num.ParseDouble(u.V.Trim(' ', '\t', '\r', '\n'));
                 y = ToDouble(num);
                 return swapped ? JavaCompare(op, y, x) : JavaCompare(op, x, y);
             }

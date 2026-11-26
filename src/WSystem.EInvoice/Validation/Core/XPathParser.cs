@@ -328,7 +328,7 @@ namespace WSystem.EInvoice.Validation.Core
             if (t.T == "num")
             {
                 var v = t.V;
-                if (v.IndexOf('e') >= 0 || v.IndexOf('E') >= 0) return new object[] { "lit", double.Parse(v, NumberStyles.Float, CultureInfo.InvariantCulture) };
+                if (v.IndexOf('e') >= 0 || v.IndexOf('E') >= 0) return new object[] { "lit", WSystem.EInvoice.Support.Num.ParseDouble(v) };
                 if (v.Contains(".")) return new object[] { "lit", Dec.Of(v) };
                 return new object[] { "lit", long.Parse(v, CultureInfo.InvariantCulture) };
             }

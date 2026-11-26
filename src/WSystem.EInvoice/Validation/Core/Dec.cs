@@ -45,7 +45,7 @@ namespace WSystem.EInvoice.Validation.Core
         public static Dec? FromFloat(double f)
         {
             if (double.IsNaN(f) || double.IsInfinity(f)) return null;
-            var s = f.ToString("R", CultureInfo.InvariantCulture);
+            var s = WSystem.EInvoice.Support.Num.RoundTrip(f);
             if (s.IndexOf('E') >= 0)
             {
                 var ex = FromFloatExact(f)!;
@@ -78,7 +78,7 @@ namespace WSystem.EInvoice.Validation.Core
         }
 
         public bool IsZero => Digits.IsZero;
-        public double ToDouble() => double.Parse(ToString(), NumberStyles.Float, CultureInfo.InvariantCulture);
+        public double ToDouble() => WSystem.EInvoice.Support.Num.ParseDouble(ToString());
 
         public override string ToString()
         {

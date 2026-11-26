@@ -37,7 +37,7 @@ namespace WSystem.EInvoice.Validation.National
         {
             var v = s.Trim(' ', '\t', '\n', '\r', '\0', '\x0B');
             if (!Numeric.IsMatch(v)) return s;
-            var f = double.Parse(v, NumberStyles.Float, CultureInfo.InvariantCulture);
+            var f = WSystem.EInvoice.Support.Num.ParseDouble(v);
             if (!double.IsInfinity(f) && !double.IsNaN(f) && f == Math.Floor(f) && Math.Abs(f) < 1e18) return ((long)f).ToString(CultureInfo.InvariantCulture);
             return Py.FloatRepr(f);
         }

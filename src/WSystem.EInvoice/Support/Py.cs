@@ -82,7 +82,7 @@ namespace WSystem.EInvoice.Support
             if (double.IsPositiveInfinity(d)) return "inf";
             if (double.IsNegativeInfinity(d)) return "-inf";
             if (d == 0) return (1 / d < 0) ? "-0.0" : "0.0";
-            string r = d.ToString("R", CultureInfo.InvariantCulture); // shortest round-trip
+            string r = WSystem.EInvoice.Support.Num.RoundTrip(d); // shortest round-trip
             bool neg = r.StartsWith("-", StringComparison.Ordinal);
             if (neg) r = r.Substring(1);
             // split into digits + decimal exponent
@@ -184,7 +184,7 @@ namespace WSystem.EInvoice.Support
                 case JsonValueKind.Number:
                     var raw = e.GetRawText();
                     if (raw.IndexOfAny(new[] { '.', 'e', 'E' }) < 0 && long.TryParse(raw, NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out var lv)) return lv;
-                    return double.Parse(raw, NumberStyles.Float, CultureInfo.InvariantCulture);
+                    return WSystem.EInvoice.Support.Num.ParseDouble(raw);
                 default: return null;
             }
         }

@@ -69,7 +69,8 @@ namespace WSystem.EInvoice.Validation
                 }
             }
             if (doc.Syntax == "cii" && doc.CustomizationId.ToLowerInvariant().Contains("extended")) issues = issues.Select(Issues.ExtendedRelax).ToList();
-            if (doc.Profile == "XRechnung Extension" && sets.Contains("XRechnung")) issues = issues.Select(i => Issues.XrechnungExtLevel(i, doc.Syntax)).ToList();
+            var kl = sets.Contains("XRechnung") ? Issues.KositLevels(doc.Profile, doc.Syntax, doc.DocumentType, doc.CustomizationId) : null;
+            if (kl != null) { var (scn, lv) = kl.Value; issues = issues.Select(i => Issues.KositLevel(i, lv, scn)).ToList(); }
             var (skIssues, sk) = Slovakia.Check(doc);
             var (noIssues, no) = Norway.Check(doc);
             issues.AddRange(skIssues); issues.AddRange(noIssues);

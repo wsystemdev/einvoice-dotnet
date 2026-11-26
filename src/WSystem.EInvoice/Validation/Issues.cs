@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using WSystem.EInvoice.Model;
 
 namespace WSystem.EInvoice.Validation
 {
@@ -128,16 +129,58 @@ namespace WSystem.EInvoice.Validation
             return i;
         }
 
-        public static ValidationIssue XrechnungExtLevel(ValidationIssue i, string syntax)
+        private static Dictionary<string, string> CiiStd() => new Dictionary<string, string>
         {
-            if (!XRECHNUNG_EXT_LEVELS[syntax].TryGetValue(i.RuleId, out var lvl) || (i.Ruleset != "EN16931" && i.Ruleset != "XRechnung")) return i;
+            ["BR-CL-23"] = "warning", ["BR-CL-21"] = "warning",
+            ["CII-SR-452"] = "error", ["CII-SR-453"] = "error", ["CII-SR-454"] = "error", ["CII-SR-465"] = "error", ["CII-SR-466"] = "error",
+            ["CII-SR-475"] = "information", ["CII-SR-476"] = "information",
+        };
+
+        /// <summary>Severity overrides of KoSIT's standard "EN16931 XRechnung" scenarios (scenarios.xml customLevel,
+        /// config 3.0.2 / 2026-08-31), per document type. Same table as XRECHNUNG_STD_LEVELS in the W System engine 0.3.157.1.</summary>
+        public static readonly Dictionary<string, Dictionary<string, string>> XRECHNUNG_STD_LEVELS = new Dictionary<string, Dictionary<string, string>>
+        {
+            ["ubl_inv"] = new Dictionary<string, string> { ["BR-CL-23"] = "warning", ["BR-CL-21"] = "warning", ["UBL-CR-646"] = "error" },
+            ["ubl_cn"] = new Dictionary<string, string> { ["BR-CL-23"] = "warning", ["BR-CL-21"] = "warning" },
+            ["cii"] = CiiStd(),
+        };
+
+        /// <summary>Severity overrides of KoSIT's "EN16931 XRechnung CVD" scenarios, per document type.</summary>
+        public static readonly Dictionary<string, Dictionary<string, string>> XRECHNUNG_CVD_LEVELS = new Dictionary<string, Dictionary<string, string>>
+        {
+            ["ubl_inv"] = new Dictionary<string, string> { ["BR-CL-13"] = "information", ["BR-CL-23"] = "warning", ["BR-CL-21"] = "warning", ["UBL-CR-646"] = "error" },
+            ["ubl_cn"] = new Dictionary<string, string> { ["BR-CL-13"] = "information", ["BR-CL-23"] = "warning", ["BR-CL-21"] = "warning", ["UBL-CR-646"] = "error" },
+            ["cii"] = new Dictionary<string, string>(CiiStd()) { ["BR-CL-13"] = "information" },
+        };
+
+        /// <summary>The KoSIT scenario that matches the exact CustomizationID: (scenario name, severity table), or null.</summary>
+        public static (string Scenario, Dictionary<string, string> Levels)? KositLevels(string profile, string syntax, string documentType, string customizationId)
+        {
+            var dt = syntax == "cii" ? "cii" : documentType;
+            if (profile == "XRechnung Extension") return ("Extension", XRECHNUNG_EXT_LEVELS[syntax]);
+            if (customizationId == Codes.XRECHNUNG_ID && XRECHNUNG_STD_LEVELS.TryGetValue(dt, out var std)) return ("XRechnung", std);
+            if (customizationId == Codes.XRECHNUNG_CVD_ID && XRECHNUNG_CVD_LEVELS.TryGetValue(dt, out var cvd)) return ("XRechnung CVD", cvd);
+            return null;
+        }
+
+        public static ValidationIssue XrechnungExtLevel(ValidationIssue i, string syntax) => KositLevel(i, XRECHNUNG_EXT_LEVELS[syntax], "Extension");
+
+        /// <summary>Apply one KoSIT scenario severity (customLevel) to one EN16931/XRechnung schematron issue.</summary>
+        public static ValidationIssue KositLevel(ValidationIssue i, Dictionary<string, string> levels, string scenario)
+        {
+            if (!levels.TryGetValue(i.RuleId, out var lvl) || (i.Ruleset != "EN16931" && i.Ruleset != "XRechnung")) return i;
             var sev = lvl == "error" ? "error" : "warning";
             if (sev == i.Severity) return i;
             i = i.Clone();
             i.Severity = sev;
-            i.ProfileNote = sev == "warning"
-                ? "Allowed in XRechnung Extension (KoSIT Extension scenario level: " + lvl + "); an error for standard XRechnung / EN 16931."
-                : "An error in XRechnung Extension (KoSIT Extension scenario level: error).";
+            if (scenario == "Extension")
+                i.ProfileNote = sev == "warning"
+                    ? "Allowed in XRechnung Extension (KoSIT Extension scenario level: " + lvl + "); an error for standard XRechnung / EN 16931."
+                    : "An error in XRechnung Extension (KoSIT Extension scenario level: error).";
+            else
+                i.ProfileNote = sev == "warning"
+                    ? "Reported as " + lvl + " by the official KoSIT " + scenario + " scenario (customLevel), not as an error; the file is not rejected for it."
+                    : "An error in the official KoSIT " + scenario + " scenario (customLevel: error).";
             return i;
         }
     }

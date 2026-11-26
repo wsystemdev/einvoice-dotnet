@@ -88,7 +88,7 @@ namespace WSystem.EInvoice.Tests
         }
 
         [Fact]
-        public void CorpusIsTheSharedOne() => Assert.Equal(17, ((Dictionary<string, object?>)Py.G(Exp, "files")!).Count);
+        public void CorpusIsTheSharedOne() => Assert.Equal(21, ((Dictionary<string, object?>)Py.G(Exp, "files")!).Count);
     }
 
     /// <summary>Every generated fixture validates locally like the reference API (same error and warning rule ids).</summary>
